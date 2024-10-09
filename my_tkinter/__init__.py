@@ -84,7 +84,8 @@ progress = ttk.Progressbar(root, orient="horizontal", length=200, mode="determin
 progress.pack(pady=10)
 
 # 创建并放置启动进度条的按钮
-button_start_progress = tk.Button(root, text="下载xx文件", command=lambda: start_progress_thread(button_start_progress))
+# button_start_progress = tk.Button(root, text="下载xx文件", command=lambda: start_progress_thread(button_start_progress))
+button_start_progress = tk.Button(root, text="下载xx文件", command=lambda: start_progress(button_start_progress))
 button_start_progress.pack(pady=10)
 
 # 运行主循环
