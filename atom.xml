@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <author>
+    <name>敲码人</name>
+  </author>
+  <generator uri="https://hexo.io/">Hexo</generator>
+  <id>https://mwzzz.github.io/</id>
+  <link href="https://mwzzz.github.io/" rel="alternate"/>
+  <link href="https://mwzzz.github.io/atom.xml" rel="self"/>
+  <rights>All rights reserved 2026, 敲码人</rights>
+  <subtitle>记录代码，分享思考</subtitle>
+  <title>敲码小站</title>
+  <updated>2026-07-10T05:00:00.000Z</updated>
+  <entry>
+    <author>
+      <name>敲码人</name>
+    </author>
+    <category term="生活随笔" scheme="https://mwzzz.github.io/categories/%E7%94%9F%E6%B4%BB%E9%9A%8F%E7%AC%94/"/>
+    <category term="随笔" scheme="https://mwzzz.github.io/tags/%E9%9A%8F%E7%AC%94/"/>
+    <content>
+      <![CDATA[<p>技术博客不必天天更新，但值得长期坚持。</p><p>把踩过的坑记下来，过几个月再看，往往比当时更有收获。敲码小站会以技术笔记为主，偶尔写一点生活随笔。</p>]]>
+    </content>
+    <id>https://mwzzz.github.io/2026/07/10/life-note/</id>
+    <link href="https://mwzzz.github.io/2026/07/10/life-note/"/>
+    <published>2026-07-10T05:00:00.000Z</published>
+    <summary>
+      <![CDATA[<p>技术博客不必天天更新，但值得长期坚持。</p>
+<p>把踩过的坑记下来，过几个月再看，往往比当时更有收获。敲码小站会以技术笔记为主，偶尔写一点生活随笔。</p>]]>
+    </summary>
+    <title>生活随笔：写博客这件事</title>
+    <updated>2026-07-10T05:00:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>敲码人</name>
+    </author>
+    <category term="踩坑总结" scheme="https://mwzzz.github.io/categories/%E8%B8%A9%E5%9D%91%E6%80%BB%E7%BB%93/"/>
+    <category term="Hexo" scheme="https://mwzzz.github.io/tags/Hexo/"/>
+    <category term="GitHub Pages" scheme="https://mwzzz.github.io/tags/GitHub-Pages/"/>
+    <category term="踩坑" scheme="https://mwzzz.github.io/tags/%E8%B8%A9%E5%9D%91/"/>
+    <content>
+      <![CDATA[<p>和很多程序员博客一样，「敲码小站」采用静态站点方案：本地写 Markdown，生成 HTML，推送到 GitHub Pages。</p><h2 id="为什么选这套方案"><a href="#为什么选这套方案" class="headerlink" title="为什么选这套方案"></a>为什么选这套方案</h2><table><thead><tr><th>优点</th><th>说明</th></tr></thead><tbody><tr><td>免费</td><td>GitHub Pages 免费托管</td></tr><tr><td>稳定</td><td>静态文件，几乎不用运维</td></tr><tr><td>简单</td><td>改 Markdown 再部署即可</td></tr></tbody></table><h2 id="本地常用命令"><a href="#本地常用命令" class="headerlink" title="本地常用命令"></a>本地常用命令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hexo s          <span class="comment"># 本地预览 http://localhost:4000</span></span><br><span class="line">hexo clean      <span class="comment"># 清理缓存</span></span><br><span class="line">hexo g          <span class="comment"># 生成静态文件到 public/</span></span><br><span class="line">hexo d          <span class="comment"># 部署到 GitHub</span></span><br><span class="line">hexo g -d       <span class="comment"># 生成并部署</span></span><br></pre></td></tr></table></figure><h2 id="部署前记得改两处"><a href="#部署前记得改两处" class="headerlink" title="部署前记得改两处"></a>部署前记得改两处</h2><ol><li>根目录 <code>_config.yml</code> 里的 <code>url</code></li><li>根目录 <code>_config.yml</code> 里 <code>deploy.repo</code> 的仓库地址</li></ol><p>把 <code>your-username</code> 换成你的 GitHub 用户名即可。</p>]]>
+    </content>
+    <id>https://mwzzz.github.io/2026/07/10/hexo-github-pages/</id>
+    <link href="https://mwzzz.github.io/2026/07/10/hexo-github-pages/"/>
+    <published>2026-07-10T04:30:00.000Z</published>
+    <summary>
+      <![CDATA[<p>和很多程序员博客一样，「敲码小站」采用静态站点方案：本地写 Markdown，生成 HTML，推送到 GitHub Pages。</p>
+<h2 id="为什么选这套方案"><a href="#为什么选这套方案" class="headerlink" title="为什么选]]>
+    </summary>
+    <title>用 Hexo 搭建个人博客并部署到 GitHub Pages</title>
+    <updated>2026-07-10T04:30:00.000Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>敲码人</name>
+    </author>
+    <category term="技术分享" scheme="https://mwzzz.github.io/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/"/>
+    <category term="Hexo" scheme="https://mwzzz.github.io/tags/Hexo/"/>
+    <category term="博客" scheme="https://mwzzz.github.io/tags/%E5%8D%9A%E5%AE%A2/"/>
+    <content>
+      <![CDATA[<p>这是「敲码小站」的第一篇文章。本站使用 <strong>Hexo + Matery</strong> 搭建，并部署到 <strong>GitHub Pages</strong>。</p><h2 id="本站能做什么"><a href="#本站能做什么" class="headerlink" title="本站能做什么"></a>本站能做什么</h2><ul><li>用 Markdown 写技术笔记</li><li>分类、标签、归档</li><li>代码高亮与搜索</li><li>免费托管在 <code>https://你的用户名.github.io</code></li></ul><h2 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">hello</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Hello, 敲码小站!&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    hello()</span><br></pre></td></tr></table></figure><h2 id="如何写新文章"><a href="#如何写新文章" class="headerlink" title="如何写新文章"></a>如何写新文章</h2><p>在项目根目录执行：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new <span class="string">&quot;文章标题&quot;</span></span><br></pre></td></tr></table></figure><p>然后编辑 <code>source/_posts/</code> 下生成的 Markdown 文件，保存后执行：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g -d</span><br></pre></td></tr></table></figure><p>即可生成并部署到 GitHub Pages。</p><blockquote><p>坚持写作，持续进步。</p></blockquote>]]>
+    </content>
+    <id>https://mwzzz.github.io/2026/07/10/welcome/</id>
+    <link href="https://mwzzz.github.io/2026/07/10/welcome/"/>
+    <published>2026-07-10T04:00:00.000Z</published>
+    <summary>
+      <![CDATA[<p>这是「敲码小站」的第一篇文章。本站使用 <strong>Hexo + Matery</strong> 搭建，并部署到 <strong>GitHub Pages</strong>。</p>
+<h2 id="本站能做什么"><a href="#本站能做什么" class="he]]>
+    </summary>
+    <title>欢迎来到敲码小站</title>
+    <updated>2026-07-10T04:00:00.000Z</updated>
+  </entry>
+</feed>
