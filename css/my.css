@@ -1,1 +1,12 @@
 /* Here is your custom css styles. */
+
+/* 标签 / 分类 / 归档 / 关于：去掉 Banner，布局与首页一致 */
+.about-cover {
+    display: none !important;
+}
+
+.chip-container,
+.archive-calendar,
+.about-container {
+    margin-top: 10px;
+}
