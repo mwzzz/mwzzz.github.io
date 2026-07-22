@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { projects } from '../data/projects';
+import { getAllTags, getPublishedPosts } from '../lib/posts';
+
+const posts = await getPublishedPosts();
+const recent = posts.slice(0, 4);
+const tags = getAllTags(posts).slice(0, 8);
+const activeProjects = projects.filter((p) => p.status === '进行中').slice(0, 3);
+---
+
+<BaseLayout title="敲码小站 · 个人学习工作台">
+  <section class="hero">
+    <div class="hero__orbit" aria-hidden="true"></div>
+    <h1 class="hero__brand">敲码小站</h1>
+    <p class="hero__lead">
+      敲码人的个人学习工作台。把笔记、项目与学习方向收在一处，记录代码，分享思考。
+    </p>
+    <div class="hero__actions">
+      <a class="btn" href="/blog/">进入笔记</a>
+      <a class="btn btn--ghost" href="/projects/">查看项目</a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="recent-heading">
+    <div class="section__head">
+      <h2 class="section__title" id="recent-heading">最近笔记</h2>
+      <a class="section__more" href="/blog/">全部笔记 →</a>
+    </div>
+    <div class="post-list">
+      {recent.map((post) => <PostCard post={post} />)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="tracks-heading">
+    <div class="section__head">
+      <h2 class="section__title" id="tracks-heading">学习方向</h2>
+      <a class="section__more" href="/blog/tags/">全部标签 →</a>
+    </div>
+    <div class="tag-row">
+      {
+        tags.map((tag) => (
+          <a class="tag" href={`/blog/tags/${encodeURIComponent(tag)}/`}>
+            {tag}
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="projects-heading">
+    <div class="section__head">
+      <h2 class="section__title" id="projects-heading">进行中的项目</h2>
+      <a class="section__more" href="/projects/">项目页 →</a>
+    </div>
+    <div class="project-list">
+      {
+        activeProjects.map((project) => (
+          <article class="project-card">
+            <h3>{project.title}</h3>
+            <p>{project.description}</p>
+            <div class="tag-row" style="margin-bottom: 0.75rem;">
+              {project.stack.map((item) => (
+                <span class="tag">{item}</span>
+              ))}
+            </div>
+            {project.href ? (
+              <a href={project.href} target="_blank" rel="noopener noreferrer">
+                打开仓库 →
+              </a>
+            ) : null}
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

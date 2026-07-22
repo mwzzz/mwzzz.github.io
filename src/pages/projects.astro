@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { projects } from '../data/projects';
+---
+
+<BaseLayout title="项目 · 敲码小站" description="敲码人正在做与做过的项目。">
+  <header class="page-intro">
+    <h1>项目</h1>
+    <p>把学习落到具体事物上：站点、笔记库，以及还在想法里的小工具。</p>
+  </header>
+
+  <div class="project-list">
+    {
+      projects.map((project) => (
+        <article class="project-card">
+          <div class="post-card__meta">
+            <span>{project.status}</span>
+          </div>
+          <h2 style="font-size: 1.4rem; margin-bottom: 0.4rem;">{project.title}</h2>
+          <p>{project.description}</p>
+          <div class="tag-row" style="margin-bottom: 0.85rem;">
+            {project.stack.map((item) => (
+              <span class="tag">{item}</span>
+            ))}
+          </div>
+          {project.href ? (
+            <a href={project.href} target="_blank" rel="noopener noreferrer">
+              查看链接 →
+            </a>
+          ) : (
+            <span style="color: var(--ink-faint); font-size: 0.92rem;">暂无公开链接</span>
+          )}
+        </article>
+      ))
+    }
+  </div>
+</BaseLayout>

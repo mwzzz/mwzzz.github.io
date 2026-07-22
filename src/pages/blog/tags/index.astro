@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getAllTags, getPublishedPosts } from '../../../lib/posts';
+
+const posts = await getPublishedPosts();
+const tags = getAllTags(posts);
+
+const counts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    counts.set(tag, (counts.get(tag) ?? 0) + 1);
+  }
+}
+---
+
+<BaseLayout title="标签 · 敲码小站" description="按标签浏览敲码小站笔记。">
+  <header class="page-intro">
+    <h1>标签</h1>
+    <p>从主题切入，快速找到相关笔记。</p>
+  </header>
+
+  <div class="tag-row">
+    {
+      tags.map((tag) => (
+        <a class="tag" href={`/blog/tags/${encodeURIComponent(tag)}/`}>
+          {tag}
+          <span style="margin-left: 0.35rem; color: var(--ink-faint);">{counts.get(tag)}</span>
+        </a>
+      ))
+    }
+  </div>
+</BaseLayout>

@@ -1,0 +1,45 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedPosts } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const date = post.data.pubDate.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={`${post.data.title} · 敲码小站`} description={post.data.description}>
+  <article>
+    <header class="post-header">
+      <h1>{post.data.title}</h1>
+      <div class="post-header__meta">
+        <time datetime={post.data.pubDate.toISOString()}>{date}</time>
+        {
+          post.data.tags.map((tag) => (
+            <a class="tag" href={`/blog/tags/${encodeURIComponent(tag)}/`}>
+              {tag}
+            </a>
+          ))
+        }
+      </div>
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+    <p style="margin-top: 2.5rem;">
+      <a href="/blog/">← 返回笔记列表</a>
+    </p>
+  </article>
+</BaseLayout>
