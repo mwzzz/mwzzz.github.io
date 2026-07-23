@@ -1,0 +1,193 @@
+---
+---
+
+<div class="pomodoro" data-pomodoro>
+  <div class="pomodoro__stage">
+    <p class="pomodoro__phase" data-pomo-phase>专注</p>
+    <p class="pomodoro__time" data-pomo-time>25:00</p>
+    <p class="pomodoro__meta" data-pomo-meta>今日完成 0 个番茄</p>
+    <p class="pomodoro__flash" data-pomo-flash hidden></p>
+  </div>
+
+  <div class="pomodoro__actions">
+    <button type="button" class="btn" data-pomo-start>开始</button>
+    <button type="button" class="btn btn--ghost" data-pomo-pause>暂停</button>
+    <button type="button" class="btn btn--ghost" data-pomo-reset>重置</button>
+  </div>
+
+  <form class="pomodoro__settings" data-pomo-settings>
+    <h3 class="pomodoro__settings-title">时长设置（分钟）</h3>
+    <div class="pomodoro__fields">
+      <label>
+        专注
+        <input type="number" name="focusMin" min="1" max="90" data-setting="focusMin" />
+      </label>
+      <label>
+        短休
+        <input type="number" name="shortBreakMin" min="1" max="30" data-setting="shortBreakMin" />
+      </label>
+      <label>
+        长休
+        <input type="number" name="longBreakMin" min="1" max="60" data-setting="longBreakMin" />
+      </label>
+    </div>
+    <p class="pomodoro__hint">进行中改设置不会打断当前轮；重置或进入下一阶段后生效。</p>
+    <button type="submit" class="btn btn--ghost">保存设置</button>
+  </form>
+
+  <p class="todo-note">数据仅保存在本机浏览器。计时使用绝对时间，刷新或切后台也能对准。</p>
+</div>
+
+<script>
+  import {
+    DEFAULT_TITLE,
+    PHASE_LABEL,
+    formatMs,
+    loadState,
+    pause,
+    playChime,
+    reset,
+    saveState,
+    start,
+    tick,
+    updateSettings,
+    type PomodoroState,
+  } from '../scripts/pomodoro';
+
+  const BASE_TITLE = document.title || DEFAULT_TITLE;
+
+  function render(root: HTMLElement, state: PomodoroState, flash = '') {
+    const phaseEl = root.querySelector<HTMLElement>('[data-pomo-phase]');
+    const timeEl = root.querySelector<HTMLElement>('[data-pomo-time]');
+    const metaEl = root.querySelector<HTMLElement>('[data-pomo-meta]');
+    const flashEl = root.querySelector<HTMLElement>('[data-pomo-flash]');
+    const startBtn = root.querySelector<HTMLButtonElement>('[data-pomo-start]');
+    const pauseBtn = root.querySelector<HTMLButtonElement>('[data-pomo-pause]');
+
+    if (phaseEl) phaseEl.textContent = PHASE_LABEL[state.phase];
+    if (timeEl) timeEl.textContent = formatMs(state.remainingMs);
+    if (metaEl) {
+      metaEl.textContent = `今日完成 ${state.completedToday} 个番茄 · 连续专注 ${state.focusStreak}`;
+    }
+    if (flashEl) {
+      if (flash) {
+        flashEl.hidden = false;
+        flashEl.textContent = flash;
+      } else {
+        flashEl.hidden = true;
+        flashEl.textContent = '';
+      }
+    }
+    if (startBtn) startBtn.disabled = state.running;
+    if (pauseBtn) pauseBtn.disabled = !state.running;
+
+    root.dataset.phase = state.phase;
+    root.dataset.running = state.running ? 'true' : 'false';
+
+    if (state.running) {
+      document.title = `${formatMs(state.remainingMs)} · ${PHASE_LABEL[state.phase]}`;
+    } else {
+      document.title = BASE_TITLE;
+    }
+
+    const form = root.querySelector<HTMLFormElement>('[data-pomo-settings]');
+    if (form) {
+      const focus = form.querySelector<HTMLInputElement>('[data-setting="focusMin"]');
+      const shortB = form.querySelector<HTMLInputElement>('[data-setting="shortBreakMin"]');
+      const longB = form.querySelector<HTMLInputElement>('[data-setting="longBreakMin"]');
+      if (focus) focus.value = String(state.settings.focusMin);
+      if (shortB) shortB.value = String(state.settings.shortBreakMin);
+      if (longB) longB.value = String(state.settings.longBreakMin);
+    }
+  }
+
+  function mount(root: HTMLElement) {
+    let state = loadState();
+    let timer: number | undefined;
+    let flashTimer: number | undefined;
+
+    const persist = () => saveState(state);
+
+    const showFlash = (msg: string) => {
+      render(root, state, msg);
+      window.clearTimeout(flashTimer);
+      flashTimer = window.setTimeout(() => render(root, state), 3200);
+    };
+
+    const stopLoop = () => {
+      if (timer != null) {
+        window.clearInterval(timer);
+        timer = undefined;
+      }
+    };
+
+    const loop = () => {
+      const result = tick(state);
+      state = result.state;
+      persist();
+      if (result.phaseEnded) {
+        stopLoop();
+        playChime();
+        const msg = result.completedFocus
+          ? '专注结束，休息一下吧。'
+          : '休息结束，可以开始下一轮专注。';
+        showFlash(msg);
+        return;
+      }
+      render(root, state);
+    };
+
+    const startLoop = () => {
+      stopLoop();
+      timer = window.setInterval(loop, 250);
+    };
+
+    render(root, state);
+    if (state.running) startLoop();
+
+    root.querySelector('[data-pomo-start]')?.addEventListener('click', () => {
+      state = start(state);
+      persist();
+      render(root, state);
+      startLoop();
+    });
+
+    root.querySelector('[data-pomo-pause]')?.addEventListener('click', () => {
+      state = pause(state);
+      persist();
+      stopLoop();
+      render(root, state);
+    });
+
+    root.querySelector('[data-pomo-reset]')?.addEventListener('click', () => {
+      state = reset(state);
+      persist();
+      stopLoop();
+      render(root, state);
+    });
+
+    root.querySelector<HTMLFormElement>('[data-pomo-settings]')?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const form = event.currentTarget as HTMLFormElement;
+      const focusMin = Number(form.querySelector<HTMLInputElement>('[data-setting="focusMin"]')?.value);
+      const shortBreakMin = Number(
+        form.querySelector<HTMLInputElement>('[data-setting="shortBreakMin"]')?.value,
+      );
+      const longBreakMin = Number(
+        form.querySelector<HTMLInputElement>('[data-setting="longBreakMin"]')?.value,
+      );
+      state = updateSettings(state, { focusMin, shortBreakMin, longBreakMin });
+      persist();
+      render(root, state);
+      showFlash('设置已保存。');
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && state.running) {
+        loop();
+      }
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-pomodoro]').forEach(mount);
+</script>

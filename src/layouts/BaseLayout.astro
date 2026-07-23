@@ -14,6 +14,7 @@ const {
 const pathname = Astro.url.pathname;
 const nav = [
   { href: '/', label: '工作台' },
+  { href: '/tools/', label: '工具' },
   { href: '/blog/', label: '笔记' },
   { href: '/projects/', label: '项目' },
   { href: '/about/', label: '关于' },
@@ -21,6 +22,9 @@ const nav = [
 
 function isCurrent(href: string) {
   if (href === '/') return pathname === '/' || pathname === '';
+  if (href === '/tools/') {
+    return pathname.startsWith('/tools/') || pathname.startsWith('/todo/');
+  }
   return pathname === href || pathname.startsWith(href);
 }
 ---

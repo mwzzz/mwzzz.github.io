@@ -1,0 +1,67 @@
+---
+---
+
+<section class="section todo-summary" aria-labelledby="todo-summary-heading" data-todo-summary>
+  <div class="section__head">
+    <h2 class="section__title" id="todo-summary-heading">今日待办</h2>
+    <a class="section__more" href="/todo/">管理待办 →</a>
+  </div>
+
+  <div class="todo-summary__card">
+    <p class="todo-summary__progress" data-summary-progress>加载中…</p>
+    <ul class="todo-summary__list" data-summary-list></ul>
+    <p class="todo-summary__status" data-summary-status hidden></p>
+  </div>
+</section>
+
+<script>
+  import {
+    ensureToday,
+    getProgress,
+    sortTodos,
+    type TodoItem,
+  } from '../scripts/todos';
+
+  function escapeHtml(text: string): string {
+    return text
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;');
+  }
+
+  function renderSummary(root: HTMLElement) {
+    const progress = root.querySelector<HTMLElement>('[data-summary-progress]');
+    const list = root.querySelector<HTMLUListElement>('[data-summary-list]');
+    const status = root.querySelector<HTMLElement>('[data-summary-status]');
+    if (!progress || !list || !status) return;
+
+    const items = ensureToday();
+    const { done, total } = getProgress(items);
+    const open = sortTodos(items).filter((item: TodoItem) => !item.done).slice(0, 5);
+
+    if (total === 0) {
+      progress.textContent = '今天还没有安排';
+      list.innerHTML = '';
+      status.hidden = false;
+      status.textContent = '去写几条今日待办，保持节奏。';
+      return;
+    }
+
+    progress.textContent = `已完成 ${done} / ${total}`;
+
+    if (open.length === 0) {
+      list.innerHTML = '';
+      status.hidden = false;
+      status.textContent = '今日待办已全部完成，不错。';
+      return;
+    }
+
+    status.hidden = true;
+    list.innerHTML = open
+      .map((item) => `<li class="todo-summary__item">${escapeHtml(item.text)}</li>`)
+      .join('');
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-todo-summary]').forEach(renderSummary);
+</script>

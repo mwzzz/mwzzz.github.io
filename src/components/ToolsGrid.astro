@@ -1,0 +1,34 @@
+---
+import type { Tool } from '../data/tools';
+
+interface Props {
+  tools: Tool[];
+}
+
+const { tools } = Astro.props;
+---
+
+<div class="tools-grid">
+  {
+    tools.map((tool) => (
+      tool.status === '可用' ? (
+        <a class="tool-card" href={tool.href}>
+          <div class="tool-card__meta">
+            <span class="tool-card__status">{tool.status}</span>
+          </div>
+          <h3 class="tool-card__title">{tool.title}</h3>
+          <p class="tool-card__desc">{tool.description}</p>
+          <span class="tool-card__link">打开 →</span>
+        </a>
+      ) : (
+        <div class="tool-card tool-card--soon" aria-disabled="true">
+          <div class="tool-card__meta">
+            <span class="tool-card__status">{tool.status}</span>
+          </div>
+          <h3 class="tool-card__title">{tool.title}</h3>
+          <p class="tool-card__desc">{tool.description}</p>
+        </div>
+      )
+    ))
+  }
+</div>

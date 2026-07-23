@@ -1,0 +1,123 @@
+---
+---
+
+<div class="todo-app" data-todo-app>
+  <div class="todo-app__head">
+    <div>
+      <p class="todo-app__date" data-todo-date>加载中…</p>
+      <p class="todo-app__progress" data-todo-progress></p>
+    </div>
+  </div>
+
+  <form class="todo-form" data-todo-form>
+    <label class="visually-hidden" for="todo-input">新待办</label>
+    <input
+      id="todo-input"
+      class="todo-form__input"
+      type="text"
+      name="text"
+      placeholder="写下今天要做的事…"
+      autocomplete="off"
+      maxlength="120"
+      data-todo-input
+    />
+    <button class="btn" type="submit">添加</button>
+  </form>
+
+  <ul class="todo-list" data-todo-list aria-live="polite"></ul>
+  <p class="todo-empty" data-todo-empty hidden>今天还没有待办，写一条开始吧。</p>
+  <p class="todo-note">数据仅保存在本机浏览器，清缓存或换设备会丢失。</p>
+</div>
+
+<script>
+  import {
+    addTodo,
+    ensureToday,
+    formatDateLabel,
+    getProgress,
+    getTodayKey,
+    removeTodo,
+    sortTodos,
+    toggleTodo,
+    type TodoItem,
+  } from '../scripts/todos';
+
+  function escapeHtml(text: string): string {
+    return text
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;');
+  }
+
+  function render(root: HTMLElement, items: TodoItem[]) {
+    const list = root.querySelector<HTMLUListElement>('[data-todo-list]');
+    const empty = root.querySelector<HTMLElement>('[data-todo-empty]');
+    const progress = root.querySelector<HTMLElement>('[data-todo-progress]');
+    const dateEl = root.querySelector<HTMLElement>('[data-todo-date]');
+    if (!list || !empty || !progress || !dateEl) return;
+
+    const today = getTodayKey();
+    dateEl.textContent = formatDateLabel(today);
+
+    const { done, total } = getProgress(items);
+    progress.textContent = total === 0 ? '暂无任务' : `已完成 ${done} / ${total}`;
+
+    const sorted = sortTodos(items);
+    list.innerHTML = sorted
+      .map(
+        (item) => `
+      <li class="todo-item${item.done ? ' is-done' : ''}" data-id="${item.id}">
+        <label class="todo-item__main">
+          <input type="checkbox" data-todo-toggle ${item.done ? 'checked' : ''} />
+          <span class="todo-item__text">${escapeHtml(item.text)}</span>
+        </label>
+        <button type="button" class="todo-item__delete" data-todo-delete aria-label="删除">删除</button>
+      </li>`,
+      )
+      .join('');
+
+    empty.hidden = sorted.length > 0;
+  }
+
+  function mount(root: HTMLElement) {
+    let items = ensureToday();
+    render(root, items);
+
+    const form = root.querySelector<HTMLFormElement>('[data-todo-form]');
+    const input = root.querySelector<HTMLInputElement>('[data-todo-input]');
+    const list = root.querySelector<HTMLUListElement>('[data-todo-list]');
+
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!input) return;
+      items = addTodo(input.value);
+      input.value = '';
+      input.focus();
+      render(root, items);
+    });
+
+    list?.addEventListener('change', (event) => {
+      const target = event.target as HTMLElement;
+      if (!(target instanceof HTMLInputElement) || !target.matches('[data-todo-toggle]')) return;
+      const row = target.closest<HTMLElement>('[data-id]');
+      const id = row?.dataset.id;
+      if (!id) return;
+      items = toggleTodo(id);
+      render(root, items);
+    });
+
+    list?.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+      const btn = target.closest<HTMLElement>('[data-todo-delete]');
+      if (!btn) return;
+      const row = btn.closest<HTMLElement>('[data-id]');
+      const id = row?.dataset.id;
+      if (!id) return;
+      items = removeTodo(id);
+      render(root, items);
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-todo-app]').forEach(mount);
+</script>
