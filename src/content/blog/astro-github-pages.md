@@ -5,7 +5,7 @@ pubDate: 2026-07-20
 tags: [Astro, GitHub Pages, 部署]
 ---
 
-和很多程序员站点一样，「敲码小站」采用静态方案：本地写 Markdown，构建成 HTML，再托管到 GitHub Pages。
+和很多程序员站点一样，「ONE」采用静态方案：本地写 Markdown，构建成 HTML，再托管到 GitHub Pages。
 
 ## 为什么选这套方案
 

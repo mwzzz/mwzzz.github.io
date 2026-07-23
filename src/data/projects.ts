@@ -8,7 +8,7 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    title: '敲码小站',
+    title: 'ONE',
     description: '个人学习工作台与技术笔记站点，用 Astro 静态构建并部署到 GitHub Pages。',
     status: '进行中',
     href: 'https://github.com/mwzzz/mwzzz.github.io',

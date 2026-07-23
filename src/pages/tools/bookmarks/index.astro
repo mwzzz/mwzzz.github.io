@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BookmarksApp from '../../../components/BookmarksApp.astro';
+import { pageTitle } from '../../../data/site';
+---
+
+<BaseLayout
+  title={pageTitle('收藏夹')}
+  description="按分类收藏链接，例如常用工具下载地址。数据保存在本机浏览器。"
+>
+  <header class="page-intro">
+    <h1>收藏夹</h1>
+    <p>创建不同类型的收藏夹，把常用下载链接、文档和资料收在一起，随时添加。</p>
+  </header>
+
+  <BookmarksApp />
+
+  <p style="margin-top: 2rem;">
+    <a href="/tools/">← 返回工具中心</a>
+  </p>
+</BaseLayout>

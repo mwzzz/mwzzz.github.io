@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { projects } from '../data/projects';
+import { pageTitle, site } from '../data/site';
 ---
 
-<BaseLayout title="项目 · 敲码小站" description="敲码人正在做与做过的项目。">
+<BaseLayout title={pageTitle('项目')} description={`${site.name} 正在做与做过的项目。`}>
   <header class="page-intro">
     <h1>项目</h1>
     <p>把学习落到具体事物上：站点、笔记库，以及还在想法里的小工具。</p>

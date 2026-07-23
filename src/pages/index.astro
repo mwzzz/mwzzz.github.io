@@ -4,6 +4,7 @@ import PostCard from '../components/PostCard.astro';
 import TodoSummary from '../components/TodoSummary.astro';
 import ToolsGrid from '../components/ToolsGrid.astro';
 import { projects } from '../data/projects';
+import { site } from '../data/site';
 import { getAvailableTools } from '../data/tools';
 import { getAllTags, getPublishedPosts } from '../lib/posts';
 
@@ -14,12 +15,12 @@ const activeProjects = projects.filter((p) => p.status === '进行中').slice(0,
 const featuredTools = getAvailableTools(4);
 ---
 
-<BaseLayout title="敲码小站 · 个人学习工作台">
+<BaseLayout title={`${site.name} · ${site.tagline}`}>
   <section class="hero">
     <div class="hero__orbit" aria-hidden="true"></div>
-    <h1 class="hero__brand">敲码小站</h1>
+    <h1 class="hero__brand">{site.name}</h1>
     <p class="hero__lead">
-      敲码人的个人学习工作台。把笔记、项目与学习方向收在一处，记录代码，分享思考。
+      one is all.
     </p>
     <div class="hero__actions">
       <a class="btn" href="/blog/">进入笔记</a>

@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TodoApp from '../../components/TodoApp.astro';
+import { pageTitle, site } from '../../data/site';
 ---
 
-<BaseLayout title="每日待办 · 敲码小站" description="敲码小站的每日待办，数据保存在本机浏览器。">
+<BaseLayout title={pageTitle('每日待办')} description={`${site.name} 的每日待办，数据保存在本机浏览器。`}>
   <header class="page-intro">
     <h1>每日待办</h1>
     <p>把今天要做的事记下来，完成一项勾一项。新的一天会自动带上昨日未完成的任务。</p>

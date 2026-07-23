@@ -1,6 +1,7 @@
 ---
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { site } from '../../data/site';
 import { getPublishedPosts } from '../../lib/posts';
 
 export async function getStaticPaths() {
@@ -20,7 +21,7 @@ const date = post.data.pubDate.toLocaleDateString('zh-CN', {
 });
 ---
 
-<BaseLayout title={`${post.data.title} · 敲码小站`} description={post.data.description}>
+<BaseLayout title={`${post.data.title} · ${site.name}`} description={post.data.description}>
   <article>
     <header class="post-header">
       <h1>{post.data.title}</h1>

@@ -1,0 +1,323 @@
+---
+---
+
+<div class="bookmarks" data-bookmarks>
+  <aside class="bookmarks__sidebar">
+    <div class="bookmarks__sidebar-head">
+      <h2 class="bookmarks__sidebar-title">收藏夹</h2>
+      <button type="button" class="btn btn--ghost bookmarks__new-btn" data-folder-toggle>
+        + 新建
+      </button>
+    </div>
+
+    <form class="bookmarks__folder-form" data-folder-form hidden>
+      <label class="visually-hidden" for="folder-name">名称</label>
+      <input
+        id="folder-name"
+        class="bookmarks__input"
+        type="text"
+        name="name"
+        placeholder="例如：常用工具下载"
+        maxlength="40"
+        required
+        data-folder-name
+      />
+      <label class="visually-hidden" for="folder-desc">说明</label>
+      <input
+        id="folder-desc"
+        class="bookmarks__input"
+        type="text"
+        name="description"
+        placeholder="可选说明"
+        maxlength="80"
+        data-folder-desc
+      />
+      <div class="bookmarks__form-actions">
+        <button type="submit" class="btn">创建</button>
+        <button type="button" class="btn btn--ghost" data-folder-cancel>取消</button>
+      </div>
+    </form>
+
+    <ul class="bookmarks__folder-list" data-folder-list></ul>
+    <p class="bookmarks__hint" data-folder-empty hidden>还没有收藏夹，先新建一个分类吧。</p>
+  </aside>
+
+  <section class="bookmarks__main" data-bookmarks-main>
+    <div class="bookmarks__empty-main" data-no-folder>
+      <p>选择或新建一个收藏夹，开始添加链接。</p>
+    </div>
+
+    <div data-folder-panel hidden>
+      <header class="bookmarks__panel-head">
+        <div>
+          <h2 class="bookmarks__panel-title" data-active-name></h2>
+          <p class="bookmarks__panel-desc" data-active-desc></p>
+        </div>
+        <div class="bookmarks__panel-actions">
+          <button type="button" class="btn btn--ghost" data-rename-toggle>重命名</button>
+          <button type="button" class="btn btn--ghost" data-delete-folder>删除收藏夹</button>
+        </div>
+      </header>
+
+      <form class="bookmarks__rename-form" data-rename-form hidden>
+        <input class="bookmarks__input" type="text" maxlength="40" required data-rename-name />
+        <input class="bookmarks__input" type="text" maxlength="80" placeholder="说明（可选）" data-rename-desc />
+        <div class="bookmarks__form-actions">
+          <button type="submit" class="btn">保存</button>
+          <button type="button" class="btn btn--ghost" data-rename-cancel>取消</button>
+        </div>
+      </form>
+
+      <form class="bookmarks__item-form" data-item-form>
+        <input
+          class="bookmarks__input"
+          type="text"
+          placeholder="标题"
+          maxlength="80"
+          required
+          data-item-title
+        />
+        <input
+          class="bookmarks__input"
+          type="text"
+          placeholder="链接，如 https://example.com"
+          maxlength="500"
+          required
+          data-item-url
+        />
+        <input
+          class="bookmarks__input"
+          type="text"
+          placeholder="备注（可选）"
+          maxlength="120"
+          data-item-note
+        />
+        <button type="submit" class="btn">添加</button>
+      </form>
+      <p class="bookmarks__error" data-item-error hidden></p>
+
+      <ul class="bookmarks__item-list" data-item-list></ul>
+      <p class="bookmarks__hint" data-item-empty hidden>这个收藏夹还是空的，添加第一条链接吧。</p>
+    </div>
+  </section>
+
+  <p class="todo-note bookmarks__note">数据仅保存在本机浏览器，清缓存或换设备会丢失。</p>
+</div>
+
+<script>
+  import {
+    addItem,
+    countItems,
+    createFolder,
+    deleteFolder,
+    deleteItem,
+    getActiveFolder,
+    getItemsForFolder,
+    loadStore,
+    renameFolder,
+    setActiveFolder,
+    type BookmarkStore,
+  } from '../scripts/bookmarks';
+
+  function escapeHtml(text: string): string {
+    return text
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;');
+  }
+
+  function mount(root: HTMLElement) {
+    let store: BookmarkStore = loadStore();
+
+    const folderList = root.querySelector<HTMLUListElement>('[data-folder-list]');
+    const folderEmpty = root.querySelector<HTMLElement>('[data-folder-empty]');
+    const folderForm = root.querySelector<HTMLFormElement>('[data-folder-form]');
+    const folderToggle = root.querySelector<HTMLButtonElement>('[data-folder-toggle]');
+    const folderCancel = root.querySelector<HTMLButtonElement>('[data-folder-cancel]');
+    const noFolder = root.querySelector<HTMLElement>('[data-no-folder]');
+    const folderPanel = root.querySelector<HTMLElement>('[data-folder-panel]');
+    const activeName = root.querySelector<HTMLElement>('[data-active-name]');
+    const activeDesc = root.querySelector<HTMLElement>('[data-active-desc]');
+    const itemList = root.querySelector<HTMLUListElement>('[data-item-list]');
+    const itemEmpty = root.querySelector<HTMLElement>('[data-item-empty]');
+    const itemForm = root.querySelector<HTMLFormElement>('[data-item-form]');
+    const itemError = root.querySelector<HTMLElement>('[data-item-error]');
+    const renameForm = root.querySelector<HTMLFormElement>('[data-rename-form]');
+    const renameToggle = root.querySelector<HTMLButtonElement>('[data-rename-toggle]');
+    const renameCancel = root.querySelector<HTMLButtonElement>('[data-rename-cancel]');
+    const deleteFolderBtn = root.querySelector<HTMLButtonElement>('[data-delete-folder]');
+
+    function render() {
+      if (!folderList || !folderEmpty || !noFolder || !folderPanel) return;
+
+      folderEmpty.hidden = store.folders.length > 0;
+      folderList.innerHTML = store.folders
+        .map((folder) => {
+          const count = countItems(store, folder.id);
+          const active = folder.id === store.activeFolderId;
+          return `
+            <li>
+              <button
+                type="button"
+                class="bookmarks__folder-btn${active ? ' is-active' : ''}"
+                data-select-folder="${folder.id}"
+              >
+                <span class="bookmarks__folder-btn-name">${escapeHtml(folder.name)}</span>
+                <span class="bookmarks__folder-btn-count">${count}</span>
+              </button>
+            </li>`;
+        })
+        .join('');
+
+      const active = getActiveFolder(store);
+      if (!active) {
+        noFolder.hidden = false;
+        folderPanel.hidden = true;
+        return;
+      }
+
+      noFolder.hidden = true;
+      folderPanel.hidden = false;
+      if (activeName) activeName.textContent = active.name;
+      if (activeDesc) {
+        activeDesc.textContent = active.description || '暂无说明';
+        activeDesc.classList.toggle('is-muted', !active.description);
+      }
+
+      const items = getItemsForFolder(store, active.id);
+      if (itemEmpty) itemEmpty.hidden = items.length > 0;
+      if (itemList) {
+        itemList.innerHTML = items
+          .map(
+            (item) => `
+          <li class="bookmarks__item">
+            <div class="bookmarks__item-body">
+              <a class="bookmarks__item-title" href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">
+                ${escapeHtml(item.title)}
+              </a>
+              <p class="bookmarks__item-url">${escapeHtml(item.url)}</p>
+              ${item.note ? `<p class="bookmarks__item-note">${escapeHtml(item.note)}</p>` : ''}
+            </div>
+            <button type="button" class="todo-item__delete" data-delete-item="${item.id}">删除</button>
+          </li>`,
+          )
+          .join('');
+      }
+
+      if (renameForm && !renameForm.hidden) {
+        const nameInput = renameForm.querySelector<HTMLInputElement>('[data-rename-name]');
+        const descInput = renameForm.querySelector<HTMLInputElement>('[data-rename-desc]');
+        if (nameInput) nameInput.value = active.name;
+        if (descInput) descInput.value = active.description;
+      }
+    }
+
+    folderToggle?.addEventListener('click', () => {
+      if (!folderForm) return;
+      folderForm.hidden = !folderForm.hidden;
+      if (!folderForm.hidden) {
+        folderForm.querySelector<HTMLInputElement>('[data-folder-name]')?.focus();
+      }
+    });
+
+    folderCancel?.addEventListener('click', () => {
+      if (!folderForm) return;
+      folderForm.hidden = true;
+      folderForm.reset();
+    });
+
+    folderForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const name = folderForm.querySelector<HTMLInputElement>('[data-folder-name]')?.value ?? '';
+      const description = folderForm.querySelector<HTMLInputElement>('[data-folder-desc]')?.value ?? '';
+      store = createFolder(store, name, description);
+      folderForm.reset();
+      folderForm.hidden = true;
+      if (renameForm) renameForm.hidden = true;
+      render();
+    });
+
+    folderList?.addEventListener('click', (event) => {
+      const btn = (event.target as HTMLElement).closest<HTMLElement>('[data-select-folder]');
+      const id = btn?.dataset.selectFolder;
+      if (!id) return;
+      store = setActiveFolder(store, id);
+      if (renameForm) renameForm.hidden = true;
+      if (itemError) itemError.hidden = true;
+      render();
+    });
+
+    itemForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const active = getActiveFolder(store);
+      if (!active) return;
+      const title = itemForm.querySelector<HTMLInputElement>('[data-item-title]')?.value ?? '';
+      const url = itemForm.querySelector<HTMLInputElement>('[data-item-url]')?.value ?? '';
+      const note = itemForm.querySelector<HTMLInputElement>('[data-item-note]')?.value ?? '';
+      const result = addItem(store, active.id, title, url, note);
+      store = result.store;
+      if (result.error) {
+        if (itemError) {
+          itemError.hidden = false;
+          itemError.textContent = result.error;
+        }
+        return;
+      }
+      if (itemError) itemError.hidden = true;
+      itemForm.reset();
+      itemForm.querySelector<HTMLInputElement>('[data-item-title]')?.focus();
+      render();
+    });
+
+    itemList?.addEventListener('click', (event) => {
+      const btn = (event.target as HTMLElement).closest<HTMLElement>('[data-delete-item]');
+      const id = btn?.dataset.deleteItem;
+      if (!id) return;
+      store = deleteItem(store, id);
+      render();
+    });
+
+    renameToggle?.addEventListener('click', () => {
+      const active = getActiveFolder(store);
+      if (!active || !renameForm) return;
+      renameForm.hidden = !renameForm.hidden;
+      if (!renameForm.hidden) {
+        const nameInput = renameForm.querySelector<HTMLInputElement>('[data-rename-name]');
+        const descInput = renameForm.querySelector<HTMLInputElement>('[data-rename-desc]');
+        if (nameInput) nameInput.value = active.name;
+        if (descInput) descInput.value = active.description;
+        nameInput?.focus();
+      }
+    });
+
+    renameCancel?.addEventListener('click', () => {
+      if (renameForm) renameForm.hidden = true;
+    });
+
+    renameForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const active = getActiveFolder(store);
+      if (!active) return;
+      const name = renameForm.querySelector<HTMLInputElement>('[data-rename-name]')?.value ?? '';
+      const description = renameForm.querySelector<HTMLInputElement>('[data-rename-desc]')?.value ?? '';
+      store = renameFolder(store, active.id, name, description);
+      renameForm.hidden = true;
+      render();
+    });
+
+    deleteFolderBtn?.addEventListener('click', () => {
+      const active = getActiveFolder(store);
+      if (!active) return;
+      const ok = window.confirm(`确定删除收藏夹「${active.name}」及其全部链接？`);
+      if (!ok) return;
+      store = deleteFolder(store, active.id);
+      if (renameForm) renameForm.hidden = true;
+      render();
+    });
+
+    render();
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-bookmarks]').forEach(mount);
+</script>

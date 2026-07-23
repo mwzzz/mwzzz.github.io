@@ -21,6 +21,13 @@ export const tools: Tool[] = [
     href: '/tools/pomodoro/',
     status: '可用',
   },
+  {
+    id: 'bookmarks',
+    title: '收藏夹',
+    description: '按分类收藏链接，例如常用工具下载地址。',
+    href: '/tools/bookmarks/',
+    status: '可用',
+  },
 ];
 
 export function getAvailableTools(limit?: number): Tool[] {

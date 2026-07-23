@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PostCard from '../../../components/PostCard.astro';
+import { site } from '../../../data/site';
 import { getAllTags, getPublishedPosts } from '../../../lib/posts';
 
 export async function getStaticPaths() {
@@ -18,7 +19,7 @@ export async function getStaticPaths() {
 const { tag, posts } = Astro.props;
 ---
 
-<BaseLayout title={`#${tag} · 敲码小站`} description={`标签「${tag}」下的笔记。`}>
+<BaseLayout title={`#${tag} · ${site.name}`} description={`标签「${tag}」下的笔记。`}>
   <header class="page-intro">
     <h1>#{tag}</h1>
     <p>

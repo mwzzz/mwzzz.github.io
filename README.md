@@ -1,10 +1,10 @@
-# 敲码小站
+# ONE
 
-敲码人的个人学习工作台：笔记、项目与学习方向。
+个人学习工作台：笔记、项目与学习方向。
 
 - 站点：https://mwzzz.github.io/
 - 技术：Astro + TypeScript + Content Collections
-- 部署：GitHub Actions → `gh-pages`
+- 部署：GitHub Actions → Pages
 
 ## 本地开发
 

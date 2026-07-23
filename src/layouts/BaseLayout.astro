@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { site } from '../data/site';
 
 interface Props {
   title?: string;
@@ -7,8 +8,8 @@ interface Props {
 }
 
 const {
-  title = '敲码小站',
-  description = '敲码人的个人学习工作台：记录笔记、整理项目、持续进步。',
+  title = site.name,
+  description = site.description,
 } = Astro.props;
 
 const pathname = Astro.url.pathname;
@@ -49,7 +50,7 @@ function isCurrent(href: string) {
       <div class="site-wrap site-header__inner">
         <a class="brand" href="/">
           <span class="brand__mark" aria-hidden="true"></span>
-          敲码小站
+          {site.name}
         </a>
         <nav aria-label="主导航">
           <ul class="nav">
@@ -75,7 +76,7 @@ function isCurrent(href: string) {
 
     <footer class="site-footer">
       <div class="site-wrap site-footer__inner">
-        <span>© {new Date().getFullYear()} 敲码人 · 敲码小站</span>
+        <span>© {new Date().getFullYear()} {site.name}</span>
         <a href="https://github.com/mwzzz" target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
     </footer>

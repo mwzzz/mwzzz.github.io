@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { pageTitle, site } from '../../../data/site';
 import { getAllTags, getPublishedPosts } from '../../../lib/posts';
 
 const posts = await getPublishedPosts();
@@ -13,7 +14,7 @@ for (const post of posts) {
 }
 ---
 
-<BaseLayout title="标签 · 敲码小站" description="按标签浏览敲码小站笔记。">
+<BaseLayout title={pageTitle('标签')} description={`按标签浏览 ${site.name} 笔记。`}>
   <header class="page-intro">
     <h1>标签</h1>
     <p>从主题切入，快速找到相关笔记。</p>

@@ -1,12 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
+import { pageTitle, site } from '../../data/site';
 import { getPublishedPosts } from '../../lib/posts';
 
 const posts = await getPublishedPosts();
 ---
 
-<BaseLayout title="笔记 · 敲码小站" description="敲码小站的学习笔记与技术记录。">
+<BaseLayout title={pageTitle('笔记')} description={`${site.name} 的学习笔记与技术记录。`}>
   <header class="page-intro">
     <h1>笔记</h1>
     <p>

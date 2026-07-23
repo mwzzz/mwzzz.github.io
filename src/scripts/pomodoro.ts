@@ -21,7 +21,7 @@ export type PomodoroState = {
 };
 
 export const STORAGE_KEY = 'mwzzz-pomodoro:v1';
-export const DEFAULT_TITLE = '番茄钟 · 敲码小站';
+export const DEFAULT_TITLE = '番茄钟 · ONE';
 
 export const PHASE_LABEL: Record<Phase, string> = {
   focus: '专注',
